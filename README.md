@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Public Care Portal - Grievance & Feedback Management Application
 
 A production-quality, accessible, and responsive Grievance & Feedback Management application built using **Next.js (App Router)**, **React 18+**, **TypeScript**, **Material UI (MUI)**, **Zod**, and **Capacitor**. 
@@ -144,3 +145,6 @@ Inside Android Studio:
 1. **Client-Side Offline First**: In Android mobile shell contexts, a Next.js server does not run locally inside the APK. Thus, the client-side `grievanceService.ts` checks `isCapacitorPlatform()`. If true (or if local fetch calls fail), it read/writes directly from/to `localStorage`. This guarantees the APK works fully offline and preserves submitted grievances across app restarts.
 2. **Server-Side Web Persistence**: When accessed via a desktop browser running the Next.js node server, we store data in `src/lib/db.json` so that server restarts don't wipe submitted grievances.
 3. **No Heavy Animation Assets**: To align with elderly accessibility constraints, all page and status changes are clean, swift, and standard, avoiding heavy visual motions that can trigger disorientation.
+=======
+# grievance-management-portal
+>>>>>>> 3999319299155d7b21d13b880bd9a2e942213d03
