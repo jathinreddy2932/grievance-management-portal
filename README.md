@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Public Care Portal - Grievance & Feedback Management Application
 
 A production-quality, accessible, and responsive Grievance & Feedback Management application built using **Next.js (App Router)**, **React 18+**, **TypeScript**, **Material UI (MUI)**, **Zod**, and **Capacitor**. 
@@ -148,3 +149,6 @@ Inside Android Studio:
 =======
 # grievance-management-portal
 >>>>>>> 3999319299155d7b21d13b880bd9a2e942213d03
+=======
+
+>>>>>>> 5a251c9ab6b5a44d5e4a2f461b083da5ede97d2d
