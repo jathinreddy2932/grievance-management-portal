@@ -1,38 +1,40 @@
 import { NextResponse } from 'next/server';
 import { GrievanceStatus } from '@/types/grievance';
+import { store } from '@/lib/store';
 
 // ============================================================
-// API Route: /api/grievances/[id]
-// Methods: GET, PATCH
+// API Route: GET  /api/grievances/[id]
+//            PATCH /api/grievances/[id]
 //
-// These are server-side API handlers for individual grievance
-// operations. The client app primarily uses localStorage for
-// persistence; these routes serve as the documented REST API.
+// Data layer: shared in-memory store (src/lib/store.ts)
 // ============================================================
 
 /**
  * GET /api/grievances/[id]
- * Returns a single grievance by ID.
+ * Returns a single grievance by its ID.
  */
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const grievance = store.getById(id);
 
-  // In a real app: query database by id
-  // For this mock: return a representative response
-  return NextResponse.json({
-    id,
-    message: `Fetch grievance ${id} from your data store.`,
-    note: 'In production, replace this with a real database query.',
-  });
+  if (!grievance) {
+    return NextResponse.json(
+      { error: `Grievance with ID "${id}" was not found.` },
+      { status: 404 }
+    );
+  }
+
+  return NextResponse.json(grievance);
 }
 
 /**
  * PATCH /api/grievances/[id]
- * Updates the status of a grievance by ID.
- * Body: { status: 'Open' | 'In Progress' | 'Resolved' }
+ * Updates the status of a grievance.
+ *
+ * Expected body: { status: 'Open' | 'In Progress' | 'Resolved' }
  */
 export async function PATCH(
   request: Request,
@@ -45,21 +47,22 @@ export async function PATCH(
     const { status } = body as { status: GrievanceStatus };
 
     const validStatuses: GrievanceStatus[] = ['Open', 'In Progress', 'Resolved'];
-    if (!validStatuses.includes(status)) {
+    if (!status || !validStatuses.includes(status)) {
       return NextResponse.json(
-        { error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` },
+        { error: `Invalid status. Allowed values: ${validStatuses.join(', ')}` },
         { status: 400 }
       );
     }
 
-    // In a real app: update database record
-    // For this mock: confirm the update was received
-    return NextResponse.json({
-      id,
-      status,
-      updatedAt: new Date().toISOString(),
-      message: `Status of grievance ${id} updated to "${status}".`,
-    });
+    const updated = store.updateStatus(id, status);
+    if (!updated) {
+      return NextResponse.json(
+        { error: `Grievance with ID "${id}" was not found.` },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(updated);
   } catch {
     return NextResponse.json(
       { error: 'Failed to update grievance status.' },
@@ -68,13 +71,5 @@ export async function PATCH(
   }
 }
 
-/**
- * PUT /api/grievances/[id]
- * Alias for PATCH — supports legacy PUT-based status updates.
- */
-export async function PUT(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  return PATCH(request, { params });
-}
+// PUT is an alias for PATCH — supports legacy clients
+export { PATCH as PUT };
